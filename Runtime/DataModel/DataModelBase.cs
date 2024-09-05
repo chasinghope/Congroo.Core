@@ -7,18 +7,18 @@ namespace Congroo.Core
     public class DataModelBase
     {
         protected List<EventWrapper> mEventWrappers;
-        protected CancellationTokenSource CancelTokenSource;
+        protected CancellationTokenSource mCancelTokenSource;
 
         public virtual void Initialize()
         {
-            CancelTokenSource = new CancellationTokenSource();
+            mCancelTokenSource = new CancellationTokenSource();
             EventCenter.Ins.BindEventWrappers(mEventWrappers);
         }
 
 
         public virtual void Release()
         {
-            CancelTokenSource.Cancel();
+            mCancelTokenSource.Cancel();
             EventCenter.Ins.UnbindEventWrappers(mEventWrappers);
         }
 
