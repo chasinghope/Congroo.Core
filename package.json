@@ -1,0 +1,17 @@
+{
+  "name": "com.congroo.core",
+  "displayName":  "Congroo Core",
+  "version": "0.0.1",
+  "unity": "2019.1",
+  "description": "Congroo framework core library.",
+  "keywords": [ "unity3d", "framework" ],
+  "category": "core",
+  "dependencies": {
+      
+  },
+  "author": {
+    "name": "Congroo",
+    "email": "bobjiang1045@163.com",
+    "url": "https://github.com/chasinghope/CongrooFrame.git"
+  }
+}
