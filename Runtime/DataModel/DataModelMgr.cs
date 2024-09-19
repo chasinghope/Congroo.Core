@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
@@ -6,33 +7,46 @@ namespace Congroo.Core
 {
     public partial class DataModelMgr : Singleton<DataModelMgr>
     {
-        private DataModelMgr()
+        Transform transform;
+        private List<Type> mDataModelList = new List<Type>();
+        private Dictionary<Type, DataModelBase> mDataModelDict = new Dictionary<Type, DataModelBase>();
+        
+        private DataModelMgr(){}
+        
+        protected override void InstanceCreated()
         {
-             
+            base.InstanceCreated();
+            GameObject go = new GameObject("[DataModelMgr]");
+            UnityEngine.Object.DontDestroyOnLoad(go);
+            transform = go.transform;
         }
 
-        private List<DataModelBase> mDataModelList = new List<DataModelBase>();
 
-        public void Initialize()
+        public T AddDataModel<T>() where T : DataModelBase  
         {
-
-        }
-
-        public void AddDataModel(DataModelBase model)
-        {
-            if(!mDataModelList.Contains(model))
+            Type type = typeof(T);
+            if(!mDataModelList.Contains(type))
             {
-                model.Initialize();
-                mDataModelList.Add(model);
+                GameObject go = new GameObject(type.Name);
+                go.transform.SetParent(transform);
+                T value = go.AddComponent<T>();
+                value.Initialize();
+                mDataModelList.Add(type);
+                mDataModelDict.Add(type, value);
+                return value;
             }
+            return null;
         }
 
-        public void RemoveDataModel(DataModelBase model)
+        public void RemoveDataModel<T>() where T : DataModelBase
         {
-            if(mDataModelList.Contains(model))
+            Type type = typeof(T);
+            if(mDataModelDict.TryGetValue(type, out DataModelBase value))
             {
-                model.Release();
-                mDataModelList.Remove(model);
+                value.Release();
+                GameObject.Destroy(value.gameObject);
+                mDataModelDict.Remove(type);
+                mDataModelList.Remove(type);
             }
         }
     }

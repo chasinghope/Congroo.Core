@@ -1,26 +1,26 @@
 using System;
 using System.Collections.Generic;
 using System.Threading;
+using UnityEngine;
 
 namespace Congroo.Core
 {
-    public class DataModelBase
+    public class DataModelBase : MonoBehaviour
     {
+        protected CancellationTokenSource CancelTokenSource;
         protected List<EventWrapper> mEventWrappers;
-        protected CancellationTokenSource mCancelTokenSource;
-
         public virtual void Initialize()
         {
-            mCancelTokenSource = new CancellationTokenSource();
+            CancelTokenSource = new CancellationTokenSource();
+            mEventWrappers = EventCenter.GetTypeEvents(this);
             EventCenter.Ins.BindEventWrappers(mEventWrappers);
         }
 
 
         public virtual void Release()
         {
-            mCancelTokenSource.Cancel();
+            CancelTokenSource.Cancel();
             EventCenter.Ins.UnbindEventWrappers(mEventWrappers);
         }
-
     }
 }
