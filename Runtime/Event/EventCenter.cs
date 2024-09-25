@@ -75,6 +75,13 @@ namespace Congroo.Core
             }
         }
 
+        public void Trigger(uint nMsgCode)
+        {
+            EventArg rEventArg = mEventArgPool.Allocate();
+            TriggerArg(nMsgCode, rEventArg);
+            mEventArgPool.Free(rEventArg);
+        }
+        
         public void Trigger(uint nMsgCode, object rArg1)
         {
             EventArg rEventArg = mEventArgPool.Allocate();
