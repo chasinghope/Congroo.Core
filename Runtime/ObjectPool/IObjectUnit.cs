@@ -7,5 +7,9 @@ namespace Congroo.Core
         /// </summary>
         bool IsUsed { get; set; }
 
+        void PoolGet();
+
+        void PoolFree();
+
     }
 }

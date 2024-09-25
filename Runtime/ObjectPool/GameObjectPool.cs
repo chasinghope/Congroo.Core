@@ -6,7 +6,6 @@ namespace Congroo.Core
 {
     public class GameObjectPool
     {
-        List<GameObject> mUseList = new List<GameObject>();
         Stack<GameObject> mFreeStack = new Stack<GameObject>();
 
         private Action<GameObject> mAllocateAction;
@@ -15,30 +14,33 @@ namespace Congroo.Core
         private Transform mParent;
         private GameObject mPrefab;
 
-        public GameObjectPool(GameObject mPrefab, Transform mParent)
+        public GameObjectPool(GameObject rPrefab, Transform rParent, int rCount = 0)
         {
-            this.mPrefab = mPrefab;
-            this.mParent = mParent;
-        }
+            if (rPrefab == null)
+            {
+                throw new ArgumentException($"rPrefab is null");
+            }
 
-        public GameObjectPool(GameObject mPrefab, Transform mParent, int nCount)
-        {
-            this.mPrefab = mPrefab;
-            this.mParent = mParent;
-            for (int i = 0; i < nCount; i++)
+            mPrefab = rPrefab;
+            mParent = rParent;
+            if (mParent == null)
+            {
+                mParent = new GameObject($"pool ->  {mPrefab.name}").transform;
+            }
+            for (int i = 0; i < rCount; i++)
             {
                 GameObject gameObj = CreateGameObject();
                 gameObj.SetActive(false);
+                gameObj.transform.SetParent(mParent);
                 mFreeStack.Push(gameObj);
             }
         }
 
-
         public GameObject Allocate()
         {
             GameObject obj = mFreeStack.Count > 0 ? mFreeStack.Pop() : CreateGameObject();
+            obj.transform.SetParent(null);
             obj.SetActive(true);
-            mUseList.Add(obj);
             mAllocateAction?.Invoke(obj);
             return obj;
         }
@@ -53,118 +55,75 @@ namespace Congroo.Core
         public void Free(GameObject rObjectUnit)
         {
             rObjectUnit.SetActive(false);
-            mUseList.Remove(rObjectUnit);
+            rObjectUnit.transform.SetParent(mParent);
             mFreeStack.Push(rObjectUnit);
         }
-
-        public void ResetFrame()
-        {
-            foreach (var obj in mUseList)
-            {
-                obj.SetActive(false);
-                mFreeAction?.Invoke(obj);
-                mFreeStack.Push(obj);
-            }
-        }
-
-        public void ClearAll()
-        {
-            foreach (var obj in mUseList)
-            {
-                mFreeAction?.Invoke(obj);
-                GameObject.Destroy(obj);
-            }
-            mUseList.Clear();
-            mFreeStack.Clear();
-        }
+        
 
         private GameObject CreateGameObject()
         {
             GameObject gameObj = GameObject.Instantiate(mPrefab);
-            gameObj.transform.SetParent(this.mParent, false);
             return gameObj;
         }
     }
 
 
-    public class GameObjectPool<T> where T : MonoBehaviour
+    public class GameObjectPool<T> where T : MonoBehaviour, IObjectUnit
     {
-        List<T> mUseList = new List<T>();
         Stack<T> mFreeStack = new Stack<T>();
-
-        private Action<T> mAllocateAction;
-        private Action<T> mFreeAction;
-
+        
         private Transform mParent;
         private T mPrefab;
-
-        public GameObjectPool(T mPrefab, Transform mParent)
+        
+        public GameObjectPool(GameObject rPrefab, Transform rParent, int nCount = 0)
         {
-            this.mPrefab = mPrefab;
-            this.mParent = mParent;
-        }
-
-        public GameObjectPool(T mPrefab, Transform mParent, int nCount)
-        {
-            this.mPrefab = mPrefab;
-            this.mParent = mParent;
+            if (rPrefab == null)
+            {
+                throw new ArgumentException($"rPrefab is null");
+            }
+            
+            mPrefab = rPrefab.GetComponent<T>();
+            mParent = rParent;
+            if (mParent == null)
+            {
+                mParent = new GameObject($"pool ->  {mPrefab.name}").transform;
+            }
             for (int i = 0; i < nCount; i++)
             {
                 T gameObj = CreateGameObject();
                 gameObj.gameObject.SetActive(false);
+                gameObj.IsUsed = false;
+                gameObj.transform.SetParent(mParent);
                 mFreeStack.Push(gameObj);
             }
-        }
-
-        public void RegisterAction(Action<T> allocateAction, Action<T> freeAction)
-        {
-            mAllocateAction = allocateAction; mFreeAction = freeAction;
         }
 
 
         public T Allocate()
         {
             T obj = mFreeStack.Count > 0 ? mFreeStack.Pop() : CreateGameObject();
+            obj.IsUsed = true;
+            obj.transform.SetParent(null);
             obj.gameObject.SetActive(true);
-            mUseList.Add(obj);
-            mAllocateAction?.Invoke(obj);
+            obj.PoolGet();
+            
             return obj;
         }
 
         public void Free(T rObjectUnit)
         {
+            if (!rObjectUnit.IsUsed)
+                return;
+            
             rObjectUnit.gameObject.SetActive(false);
-            mUseList.Remove(rObjectUnit);
+            rObjectUnit.IsUsed = false;
+            rObjectUnit.transform.SetParent(mParent);
             mFreeStack.Push(rObjectUnit);
         }
-
-        public void ResetFrame()
-        {
-            foreach (var obj in mUseList)
-            {
-                obj.gameObject.SetActive(false);
-                mFreeAction?.Invoke(obj);
-                mFreeStack.Push(obj);
-            }
-        }
-
-        public void DestoryAll()
-        {
-            foreach (var obj in mUseList)
-            {
-                mFreeAction?.Invoke(obj);
-                GameObject.Destroy(obj.gameObject);
-            }
-            mUseList.Clear();
-            mFreeStack.Clear();
-        }
-
-
-
+        
         private T CreateGameObject()
         {
             GameObject gameObj = GameObject.Instantiate(mPrefab.gameObject);
-            gameObj.transform.SetParent(this.mParent, false);
             return gameObj.GetComponent<T>();
         }
 

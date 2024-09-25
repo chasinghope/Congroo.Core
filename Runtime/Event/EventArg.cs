@@ -11,6 +11,15 @@ namespace Congroo.Core
         #region Implementation IObjectUnit interface
 
         public bool IsUsed { get; set; }
+        public void PoolGet()
+        {
+            
+        }
+
+        public void PoolFree()
+        {
+            
+        }
 
         #endregion
 
