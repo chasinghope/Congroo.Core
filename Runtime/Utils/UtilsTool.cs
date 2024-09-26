@@ -69,7 +69,7 @@ namespace Congroo.Core
             }
             else
             {
-                CLog.E(LType.Congroo, $"颜色格式错误 {hexFormat}");
+                Debug.LogError($"颜色格式错误 {hexFormat}");
                 return Color.white;
             }
         }

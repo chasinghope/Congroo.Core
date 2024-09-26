@@ -132,24 +132,24 @@ namespace Congroo.Core
     {
         //创建
         ByteArray buff = new ByteArray(8);
-        CLog.L("[1 debug]->" + buff.Debug());
-        CLog.L("[1 string]->" + buff.ToString());
+        UnityEngine.Debug.Log("[1 debug]->" + buff.Debug());
+        UnityEngine.Debug.Log("[1 string]->" + buff.ToString());
         //写入
         byte[] wb = new byte[] { 1, 2, 3, 4, 5 };
         buff.Write(wb, 0, 5);
-        CLog.L("[2 debug]->" + buff.Debug());
-        CLog.L("[2 string]->" + buff.ToString());
+        UnityEngine.Debug.Log("[2 debug]->" + buff.Debug());
+        UnityEngine.Debug.Log("[2 string]->" + buff.ToString());
         //读取
         byte[] rb = new byte[4];
         buff.Read(rb, 0, 2);
-        CLog.L("[3 debug]->" + buff.Debug());
-        CLog.L("[3 string]->" + buff.ToString());
-        CLog.L("[3 string]->" + BitConverter.ToString(rb));
+        UnityEngine.Debug.Log("[3 debug]->" + buff.Debug());
+        UnityEngine.Debug.Log("[3 string]->" + buff.ToString());
+        UnityEngine.Debug.Log("[3 string]->" + BitConverter.ToString(rb));
         //写入,Resize
         wb = new byte[] { 6, 7, 8, 8, 10, 11 };
         buff.Write(wb, 0, 6);
-        CLog.L("[4 debug]->" + buff.Debug());
-        CLog.L("[4 string]->" + buff.ToString());
+        UnityEngine.Debug.Log("[4 debug]->" + buff.Debug());
+        UnityEngine.Debug.Log("[4 string]->" + buff.ToString());
     }
 }
 }
