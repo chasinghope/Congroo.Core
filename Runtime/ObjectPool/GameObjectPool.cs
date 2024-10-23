@@ -38,7 +38,11 @@ namespace Congroo.Core
 
         public GameObject Allocate()
         {
-            GameObject obj = mFreeStack.Count > 0 ? mFreeStack.Pop() : CreateGameObject();
+            GameObject obj = null;
+            while (obj == null)
+            {
+                obj = mFreeStack.Count > 0 ? mFreeStack.Pop() : CreateGameObject();
+            }
             obj.transform.SetParent(null);
             obj.SetActive(true);
             mAllocateAction?.Invoke(obj);
@@ -101,7 +105,13 @@ namespace Congroo.Core
 
         public T Allocate()
         {
-            T obj = mFreeStack.Count > 0 ? mFreeStack.Pop() : CreateGameObject();
+            T obj = null;
+            while (obj == null)
+            {
+                obj = mFreeStack.Count > 0 ? mFreeStack.Pop() : CreateGameObject();
+            }
+
+            
             obj.IsUsed = true;
             obj.transform.SetParent(null);
             obj.gameObject.SetActive(true);
