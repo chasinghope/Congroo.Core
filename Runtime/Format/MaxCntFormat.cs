@@ -86,7 +86,7 @@ namespace Congroo.Core
             string output = value.ToString();
             if (value >= 10000)
             {
-                output = $"{Math.Round(value / 10000, 2)}Íò";
+                output = $"{Math.Round(value / 10000, 2)}w";
             }
             
             return output;
