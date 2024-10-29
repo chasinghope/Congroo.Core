@@ -69,6 +69,14 @@ namespace Congroo.Core
             GameObject gameObj = GameObject.Instantiate(mPrefab);
             return gameObj;
         }
+        
+        public void Dispose()
+        {
+            if (mParent != null)
+            {
+                GameObject.Destroy(mParent.gameObject);
+            }
+        }
     }
 
 
@@ -137,6 +145,12 @@ namespace Congroo.Core
             return gameObj.GetComponent<T>();
         }
 
-
+        public void Dispose()
+        {
+            if (mParent != null)
+            {
+                GameObject.Destroy(mParent.gameObject);
+            }
+        }
     }
 }
