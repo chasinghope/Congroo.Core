@@ -15,9 +15,13 @@ namespace Congroo.Core
 
         public bool IsOnce = false;
         public bool IsRefreshed = false;
+
+        public float vaildAspectRatio;
+        
         void Start()
         {
             mCamera = GetComponent<Camera>();
+            vaildAspectRatio = VaildWidth / VaildHeight;
             Refresh();
         }
 
@@ -35,7 +39,6 @@ namespace Congroo.Core
             {
                 Refresh();
             }
-        
         }
         
         private void Refresh()
@@ -44,7 +47,17 @@ namespace Congroo.Core
             h = Screen.height;
             aspectRatio = w * 1f / h ;
             float wWant = VaildWidth / aspectRatio / 2f;
-            mCamera.orthographicSize = Mathf.Max(wWant, VaildHeight / 2f);
+            float hWant = VaildHeight / 2f;
+            if (aspectRatio <= vaildAspectRatio)
+            {
+                mCamera.orthographicSize = Mathf.Max(wWant, hWant);
+            }
+            else
+            {
+                mCamera.orthographicSize = Mathf.Min(wWant, hWant);
+            }
+            
+           
         }
     }
 }
