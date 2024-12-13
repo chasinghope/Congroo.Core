@@ -130,6 +130,9 @@ namespace Congroo.Core
 
         public void Free(T rObjectUnit)
         {
+            if (rObjectUnit == null)
+                return;
+            
             if (!rObjectUnit.IsUsed)
                 return;
             
